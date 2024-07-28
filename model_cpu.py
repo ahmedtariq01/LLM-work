@@ -40,8 +40,11 @@ def prune_model(model):
         if isinstance(module, torch.nn.Linear):
             # Apply pruning to the Linear layers
             prune.l1_unstructured(module, name='weight', amount=0.1)  # Example: prune 20% of weights
+            # Remove the pruning reparametrization to save memory
+            prune.remove(module, 'weight')
 
     print("Model pruning complete.")
+
 
 # Function to generate a response based on user input
 def get_response(prompt):
