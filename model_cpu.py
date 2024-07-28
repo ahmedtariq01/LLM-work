@@ -1,6 +1,8 @@
 import torch
+import torch.nn.utils.prune as prune
 #from transformers import AutoTokenizer, AutoModelForCausalLM, LlamaTokenizer
 from transformers import AutoTokenizer, MistralForCausalLM
+
 #import bitsandbytes, flash_attn
 
 # Define cache directories (optional)
@@ -24,10 +26,22 @@ def get_model_and_tokenizer():
         cache_dir=cache_dir
     )
 
+    # Prune the model
+    prune_model(model)
+
     # Set the model to evaluation mode
     model.eval()
     
     return tokenizer, model
+
+# Function to prune the model
+def prune_model(model):
+    for name, module in model.named_modules():
+        if isinstance(module, torch.nn.Linear):
+            # Apply pruning to the Linear layers
+            prune.l1_unstructured(module, name='weight', amount=0.1)  # Example: prune 20% of weights
+
+    print("Model pruning complete.")
 
 # Function to generate a response based on user input
 def get_response(prompt):
