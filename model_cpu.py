@@ -26,6 +26,9 @@ def get_model_and_tokenizer():
         cache_dir=cache_dir
     )
 
+    # Resize model embeddings to accommodate any changes if needed (though not adding special tokens now)
+    model.resize_token_embeddings(len(tokenizer))
+
     # Prune the model
     prune_model(model)
 
@@ -39,7 +42,7 @@ def prune_model(model):
     for name, module in model.named_modules():
         if isinstance(module, torch.nn.Linear):
             # Apply pruning to the Linear layers
-            prune.l1_unstructured(module, name='weight', amount=0.1)  # Example: prune 20% of weights
+            prune.l1_unstructured(module, name='weight', amount=0.05)  # Example: prune 20% of weights
             # Remove the pruning reparametrization to save memory
             prune.remove(module, 'weight')
 

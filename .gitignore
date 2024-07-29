@@ -1,4 +1,4 @@
 model
 cache
 env
-model_gpu.py
+.gitignore
